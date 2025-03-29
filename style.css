@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+:root {
+    --primary: #4B0082;      /* Deep Purple */
+    --secondary: #9932CC;    /* Bright Purple */
+    --accent: #FF8C00;       /* Dark Orange */
+    --accent-light: #FFA500; /* Orange */
+    --dark: #191970;         /* Midnight Blue */
+    --light: #FFFACD;        /* Lemon Chiffon - old paper look */
+    --success: #228B22;      /* Forest Green */
+    --warning: #FFD700;      /* Gold */
+    --danger: #B22222;       /* Firebrick Red */
+    --text: #322;            /* Deep Brown */
+    --text-light: #F5F5DC;   /* Beige */
+    --wood-dark: #8B4513;    /* SaddleBrown */
+    --wood-light: #CD853F;   /* Peru */
+    --score-color: #FFD700;  /* Gold for score */
+    --heart-active: #FF69B4; /* HotPink */
+    /* No necesitamos color para inactivo si usamos visibility */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'VT323', monospace;
+    letter-spacing: 0.5px;
+}
+
+html, body { height: 100%; }
+
+body {
+    background-color: #111; color: var(--text); line-height: 1.6; padding: 20px;
+    background-image: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/subtlenet2.png');
+    display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
+}
+
+/* --- Layout Principal --- */
+.container {
+    max-width: 960px; width: 100%; margin: 20px auto; background-color: var(--light);
+    border-radius: 8px; border: 6px solid var(--wood-dark);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 50px rgba(139, 69, 19, 0.1);
+    position: relative; overflow: hidden; display: flex; flex-direction: column;
+    max-height: calc(100vh - 40px);
+}
+
+/* --- Intro --- */
+#intro { text-align: center; padding: 30px 25px; background-image: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/papyrus.png'); flex-shrink: 0; }
+.intro h1 { font-size: 36px; color: var(--primary); margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); position: relative; display: inline-block; }
+.intro h1:after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 120%; height: 3px; background: linear-gradient(to right, transparent, var(--accent), transparent); }
+.intro-image { display: block; width: 450px; max-width: 100%; height: auto; margin: 25px auto; border: 3px solid var(--wood-dark); border-radius: 4px; background-color: #eee; }
+.intro p { font-size: 18px; margin-bottom: 25px; max-width: 750px; margin-left: auto; margin-right: auto; line-height: 1.5; margin-top: 25px; }
+
+/* --- Juego Principal --- */
+#game-container { display: none; flex-direction: column; flex-grow: 1; overflow: hidden; width: 100%; }
+.header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--text-light); padding: 10px 20px; text-align: center; border-bottom: 4px solid var(--wood-dark); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); position: relative; overflow: hidden; flex-shrink: 0; z-index: 2; }
+.header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/crossword.png'); opacity: 0.1; z-index: 1; }
+.game-title { font-size: 28px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); position: relative; z-index: 3; margin: 0; }
+
+/* --- Dashboard --- */
+.dashboard {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 15px; background: linear-gradient(to bottom, var(--wood-dark), var(--wood-light));
+    color: var(--text-light); border-bottom: 3px solid var(--wood-dark);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); gap: 15px; flex-shrink: 0;
+}
+.stat { text-align: center; position: relative; z-index: 1; padding: 0; flex-shrink: 0; }
+.stat-label { font-size: 13px; margin-bottom: 4px; opacity: 0.8; text-shadow: none; white-space: nowrap; }
+.stat-value { font-size: 18px; }
+.stat:nth-child(1) { flex-basis: 12%; text-align: left; margin-right: auto; }
+.stat-progress { flex-basis: 28%; min-width: 100px; }
+.stat-progress:nth-child(3) { margin-left: 15px; }
+.stat-ae { flex-basis: auto; min-width: 140px; text-align: left; margin-left: auto; }
+
+/* Barras Estamina/ACV */
+.progress-bar { width: 100%; height: 16px; background-color: rgba(0, 0, 0, 0.2); border-radius: 8px; margin: 0; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.3); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); }
+.progress { height: 100%; transition: width 0.5s ease-in-out, background-color 0.5s ease; box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3); background-image: linear-gradient( 45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent ); background-size: 15px 15px; animation: progress-bar-stripes 1s linear infinite; }
+@keyframes progress-bar-stripes { from { background-position: 0 0; } to { background-position: 15px 0; } }
+.stamina-progress { background-color: var(--success); }
+.acv-progress { background-color: var(--accent); }
+
+/* Estilos Corazones AE */
+.ae-group { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
+.ae-container { display: flex; align-items: center; justify-content: flex-start; gap: 5px; }
+.ae-name { width: 50px; font-size: 12px; text-align: right; flex-shrink: 0; opacity: 0.9; margin-right: 4px; }
+.hearts-container { display: flex; align-items: center; gap: 1px; }
+.heart {
+    font-size: 15px; line-height: 1; display: inline-block;
+    transition: color 0.3s ease, visibility 0s; /* Añadido visibility a transition */
+    text-shadow: none;
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    /* IMPORTANTE: Asegurar que el espacio se mantiene */
+    min-width: 16px; /* Ancho mínimo para asegurar espacio */
+    text-align: center;
+}
+/* CORRECCIÓN: Estilos para activo/inactivo usando visibility */
+.heart.active {
+    color: var(--heart-active);
+    visibility: visible; /* Asegura que sea visible */
+}
+.heart.inactive {
+    visibility: hidden; /* Oculta el corazón pero MANTIENE EL ESPACIO */
+    /* No necesita color si está oculto */
+}
+
+
+/* --- Área de Contenido --- */
+.content { padding: 20px 25px; background-image: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/papyrus.png'); background-color: var(--light); overflow-y: auto; flex-grow: 1; }
+.situation { margin-bottom: 25px; }
+.situation-title { font-size: 22px; font-weight: bold; margin-bottom: 15px; color: var(--primary); text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15); border-bottom: 2px dotted var(--primary); padding-bottom: 5px; }
+.situation-body { display: flex; align-items: flex-start; gap: 20px; margin-top: 15px; margin-bottom: 20px; }
+.situation-image { width: 450px; max-width: 45%; height: auto; object-fit: contain; border: 3px solid var(--wood-light); border-radius: 4px; background-color: #ddd; flex-shrink: 0; }
+.situation-body .chat-bubble { flex-grow: 1; margin-bottom: 0; max-width: 100%; }
+
+/* --- Opciones, Outcome, etc. (sin cambios) --- */
+.options { margin-top: 20px; }
+.option { padding: 12px 15px; margin-bottom: 12px; background-color: var(--text-light); border: 3px solid var(--wood-light); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-size: 16px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); position: relative; line-height: 1.5; display: flex; align-items: center; }
+.option > span:last-child { flex-grow: 1; }
+.option::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(0,0,0,0.05)); pointer-events: none; border-radius: 5px; }
+.option:hover { background-color: var(--accent-light); transform: translateY(-2px); box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.15); border-color: var(--accent); color: #000; }
+.option.selected { background-color: var(--accent); border-color: var(--accent-light); color: white; transform: translateY(1px); box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2); cursor: default; }
+.option-number { display: inline-block; width: 28px; height: 28px; background-color: var(--primary); color: white; border-radius: 50%; text-align: center; line-height: 28px; margin-right: 10px; box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5); vertical-align: middle; flex-shrink: 0; }
+.outcome { margin-top: 25px; padding: 15px 20px; background-color: var(--text-light); border-radius: 8px; border: 3px solid var(--wood-light); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); position: relative; }
+.outcome::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/papyrus-dark.png'); opacity: 0.1; border-radius: 5px; pointer-events: none; }
+.outcome-title { font-weight: bold; color: var(--accent); margin-bottom: 15px; font-size: 20px; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1); border-bottom: 2px dotted var(--accent); padding-bottom: 5px; }
+.impact { display: flex; flex-wrap: wrap; margin-top: 15px; gap: 8px; }
+.impact-item { flex: 1 1 160px; margin: 4px; padding: 10px 12px; background-color: white; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); border: 2px solid var(--wood-light); font-size: 15px; position: relative; overflow: hidden; display: flex; align-items: center; }
+.impact-item::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(0,0,0,0.02)); pointer-events: none; }
+.impact-icon { margin-right: 8px; font-size: 18px; min-width: 22px; text-align: center; }
+.positive { color: var(--success); }
+.negative { color: var(--danger); }
+.neutral { color: var(--secondary); }
+.button { display: inline-block; padding: 10px 20px; background: linear-gradient(to bottom, var(--accent-light), var(--accent)); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; transition: all 0.3s ease; margin-top: 20px; box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2); position: relative; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3); text-align: center; }
+.button:hover { background: linear-gradient(to bottom, var(--accent), var(--accent-light)); transform: translateY(-2px); box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2); }
+.button:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2); }
+.button:disabled { background: linear-gradient(to bottom, #cccccc, #999999); cursor: not-allowed; box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1); color: #666; }
+
+/* --- Pantalla Final --- */
+.game-over { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.95); color: white; flex-direction: column; justify-content: space-evenly; align-items: center; padding: 40px 20px; text-align: center; z-index: 100; background-image: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/diagmonds-dark.png'); overflow-y: auto; }
+.game-over h2 { font-size: 36px; margin-bottom: 15px; text-shadow: 0 0 10px rgba(255, 140, 0, 0.8), 0 0 20px rgba(255, 140, 0, 0.5); color: var(--accent-light); }
+.outcome-emoji { font-size: 50px; margin-bottom: 15px; }
+.final-score-display { font-size: 32px; margin: 10px 0 20px 0; color: var(--text-light); font-weight: bold; }
+#final-score-value { font-size: 72px; color: var(--score-color); display: block; margin-top: 5px; text-shadow: 2px 2px 5px rgba(0,0,0,0.5); }
+.game-over p#game-over-reason { font-size: 18px; margin-bottom: 20px; max-width: 85%; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); line-height: 1.5; color: #eee; }
+.final-stats { display: flex; justify-content: space-around; flex-wrap: wrap; width: 90%; max-width: 500px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); gap: 15px; }
+.final-stat { text-align: center; }
+.final-stat .stat-label { font-size: 15px; margin-bottom: 5px; color: #ccc; text-shadow: none; }
+.final-value { font-size: 24px; font-weight: bold; color: var(--accent-light); text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+.game-over .button { margin-top: 15px; }
+
+/* --- Chat --- */
+.chat-bubble { position: relative; padding: 15px 18px; border-radius: 12px; max-width: 100%; font-size: 17px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); line-height: 1.5; }
+.chat-ae { background-color: #E6F7FF; border: 2px solid #BEE3F8; }
+.chat-ae:after { content: ''; position: absolute; top: 0; right: -10px; width: 0; height: 0; border-width: 10px 0 0 10px; border-style: solid; border-color: transparent transparent transparent #BEE3F8; }
+.chat-se { background-color: #E6FFED; border: 2px solid #C6F6D5; }
+.chat-se:after { content: ''; position: absolute; top: 0; left: -10px; width: 0; height: 0; border-width: 10px 10px 0 0; border-style: solid; border-color: #C6F6D5 transparent transparent transparent; }
+.chat-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; display: inline-block; padding: 3px 8px; border-radius: 4px; text-shadow: none; }
+.chat-ae .chat-name { color: white; background-color: var(--secondary); }
+.chat-se .chat-name { color: white; background-color: var(--success); }
+
+/* --- Tooltips & Icons --- */
+.tooltip { position: relative; display: inline-block; }
+.tooltip .tooltiptext { visibility: hidden; width: 160px; background-color: #555; color: #fff; text-align: center; border-radius: 6px; padding: 5px 10px; position: absolute; z-index: 10; bottom: 125%; left: 50%; margin-left: -80px; opacity: 0; transition: opacity 0.3s; font-size: 14px; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,0.3); pointer-events: none; }
+.tooltip .tooltiptext::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #555 transparent transparent transparent; }
+.tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+.skull-icon { position: absolute; font-size: 20px; pointer-events: none; z-index: 0; opacity: 0.05; }

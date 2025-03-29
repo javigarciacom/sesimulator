@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Vida de un Solution Engineer v2.4 (Corazones)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="intro" class="intro">
+            <h1>La Vida de un Solution Engineer v2.4</h1>
+            <img src="img/0.png" alt="Escena introductoria del juego" class="intro-image">
+            <p>¡Bienvenido de nuevo a la emocionante (y a veces caótica) vida de un Solution Engineer! Tu misión, si decides aceptarla, es navegar por las peticiones de tus Account Executives (AEs), mantener tu energía (estamina), cerrar tratos jugosos (ACV) y, con suerte, mantener a todos contentos.</p>
+            <p><strong>Objetivo:</strong> Supera <span id="total-situations-intro">10</span> situaciones desafiantes. Mantén tu estamina por encima de 0 y evita enfadar a 2 o más AEs (¡cuida esos corazones!). Alcanza tu objetivo de $500k ACV. ¡Demuestra tu valía y consigue la mejor puntuación!</p>
+            <button id="start-game" class="button">¡Comenzar Nueva Aventura!</button>
+            <div style="margin-top: 25px; font-size: 14px; opacity: 0.7;">
+                <p style="font-style: italic;">(Versión con Corazones y nuevas reglas)</p>
+            </div>
+        </div>
+
+        <div id="game-container" style="display: none;">
+            <div class="header">
+                <div class="game-title">La Vida de un Solution Engineer</div>
+            </div>
+
+            <div class="dashboard">
+                 <div class="stat">
+                    <div class="stat-label">Situación</div>
+                    <div class="stat-value" id="situation-counter">1/10</div>
+                </div>
+                <div class="stat stat-progress"> <div class="stat-label">Estamina</div>
+                    <div class="progress-bar">
+                        <div class="progress stamina-progress" id="stamina-bar"></div>
+                    </div>
+                    <div class="stat-value" id="stamina-value">100%</div>
+                </div>
+                <div class="stat stat-progress"> <div class="stat-label">ACV</div>
+                    <div class="progress-bar">
+                        <div class="progress acv-progress" id="acv-bar"></div>
+                    </div>
+                    <div class="stat-value" id="acv-value">$0k / $500k</div>
+                </div>
+                <div class="stat stat-ae"> <div class="ae-group">
+                        <div class="ae-container">
+                            <div class="ae-name">Carlos:</div>
+                            <div class="hearts-container" id="ae1-hearts">
+                                </div>
+                        </div>
+                        <div class="ae-container">
+                            <div class="ae-name">Laura:</div>
+                            <div class="hearts-container" id="ae2-hearts">
+                                </div>
+                        </div>
+                        <div class="ae-container">
+                            <div class="ae-name">Miguel:</div>
+                            <div class="hearts-container" id="ae3-hearts">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content" id="game-content">
+                </div>
+
+            <div id="game-over" class="game-over">
+                 <h2 id="final-title">¡Aventura Terminada!</h2>
+                 <div class="outcome-emoji" id="outcome-emoji">😓</div>
+                  <div class="final-score-display">
+                      Puntuación Final:
+                      <span id="final-score-value">0</span>
+                  </div>
+                 <p id="game-over-reason">Razón del final del juego...</p>
+                 <div class="final-stats">
+                     <div class="final-stat"> <div class="stat-label">ACV Final</div> <div class="final-value" id="final-acv">$0k</div> </div>
+                     <div class="final-stat"> <div class="stat-label">Situaciones</div> <div class="final-value" id="final-situations">0/10</div> </div>
+                     <div class="final-stat"> <div class="stat-label">Estamina Final</div> <div class="final-value" id="final-stamina">0%</div> </div>
+                      <div class="final-stat"> <div class="stat-label">Corazones Medios</div> <div class="final-value" id="final-avg-relation">0/5</div> </div>
+                 </div>
+                 <button id="restart-game" class="button">¡Jugar de Nuevo!</button>
+             </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
