@@ -7,10 +7,12 @@ const gameState = {
     targetAcv: 500,
     maxHearts: 5,
     aeRelationships: { "Carlos": 3, "Laura": 3, "Miguel": 3 },
+    totalOpportunityIncrease: 0,
+    maxPossibleOpportunityIncrease: 130,
     situationHistory: []
 };
 
-// --- Game Situations (10 defined) ---
+// --- Game Situations (10 defined - sin cambios) ---
 const situations = [
     { id: 1, title: "Petición Urgente de Demo - Carnicerías Pepe", ae: "Carlos", description: "¡Ayuda urgente! Necesito una demo súper personalizada de Marketing Cloud para mañana a primera hora. El cliente es **Carnicerías Pepe**, una cadena local en expansión con ganas de digitalizarse. ¡El potencial son 150k ACV si les impresionamos! Sé que es un marrón y sobre la bocina, pero el dueño, Pepe, solo podía mañana y es nuestra única bala. ¿Puedes hacer magia?", options: [ { text: "Aceptar. Noche en vela, café y a por ello. ¡Por Pepe!", outcome: "Tras una noche heroica a base de cafeína, montas una demo espectacular que deja a Pepe boquiabierto. Carlos te adora, pero tú pareces un fantasma.", impacts: { stamina: -25, aeRelationship: { "Carlos": +1 }, opportunity: "+25%", acv: 0 } }, { text: "Negociar. Usar la demo estándar y añadir 2-3 slides personalizadas.", outcome: "Le explicas a Carlos que una demo completa es inviable. Preparas la demo estándar y añades detalles sobre el sector cárnico. Es funcional, pero no 'wow'. Carlos acepta a regañadientes.", impacts: { stamina: -10, aeRelationship: { "Carlos": -1 }, opportunity: "-5%", acv: 0 } }, { text: "Rechazar. Imposible garantizar calidad con tan poco tiempo.", outcome: "Le dices a Carlos que es imposible hacer un buen trabajo así, y que sería contraproducente. Carlos monta en cólera, dice que no eres un jugador de equipo. Priorizas tu salud mental.", impacts: { stamina: +5, aeRelationship: { "Carlos": -2 }, opportunity: "-40%", acv: 0 } } ] },
     { id: 2, title: "Conflicto de Prioridades - Banco Solidario vs Juguetes PlayFun", ae: "Laura", description: "Tengo una reunión estratégica la semana que viene con **Banco Solidario** (potencial 75k ACV) y necesito que definamos la arquitectura técnica para integrar sus sistemas legacy. Es complejo. Pero me ha dicho Miguel que también te necesita para una RFP urgente de **Juguetes PlayFun**. ¿Cómo lo hacemos?", options: [ { text: "Priorizar Banco Solidario. La planificación de Laura es más sólida.", outcome: "Te centras en la arquitectura para Laura. Banco Solidario queda impresionado con el plan. Miguel se queja de que le dejaste colgado con la RFP.", impacts: { stamina: -15, aeRelationship: { "Laura": +1, "Miguel": -1 }, opportunity: "+15% (Laura)", acv: 0 } }, { text: "Intentar hacer malabares. Dedicar medio tiempo a cada uno.", outcome: "Trabajas el doble, corriendo de una tarea a otra. Consigues entregar algo para ambos, pero la calidad es justita y acabas la semana hecho polvo.", impacts: { stamina: -30, aeRelationship: { "Laura": 0, "Miguel": 0 }, opportunity: "+0% (Ambas)", acv: 0 } }, { text: "Escalar. Hablar con tu manager para que ayude a priorizar.", outcome: "Planteas el conflicto a tu manager. Tras una reunión, deciden posponer ligeramente la estrategia del Banco para asegurar la RFP. Laura y Miguel entienden, aunque hay retrasos.", impacts: { stamina: -5, aeRelationship: { "Laura": 0, "Miguel": +1 }, opportunity: "0%", acv: 0 } } ] },
@@ -28,7 +30,10 @@ const situations = [
 // --- DOM Elements (Cached) ---
 let introSection, gameContainer, gameContent, staminaBar, staminaValue, acvBar, acvValue, ae1Hearts, ae2Hearts, ae3Hearts, situationCounter, gameOverScreen, finalTitle, gameOverReason, outcomeEmoji, finalScoreValue, finalAcv, finalSituations, finalStamina, finalAvgRelation, totalSituationsIntro, startGameButton, restartGameButton;
 
+// --- Cache DOM elements ONCE ---
+// Added basic check to see if essential elements exist after caching
 function cacheDOMElements() {
+    console.log("Caching DOM elements..."); // DEBUG
     introSection = document.getElementById('intro');
     gameContainer = document.getElementById('game-container');
     gameContent = document.getElementById('game-content');
@@ -52,141 +57,183 @@ function cacheDOMElements() {
     totalSituationsIntro = document.getElementById('total-situations-intro');
     startGameButton = document.getElementById('start-game');
     restartGameButton = document.getElementById('restart-game');
+
+    if (!introSection || !gameContainer || !startGameButton || !gameContent) {
+        console.error("Essential elements could not be cached! Check HTML IDs.");
+    }
 }
 
 // --- Initialization ---
 function initializeGame() {
-    if (!totalSituationsIntro) cacheDOMElements();
-    if (totalSituationsIntro) { totalSituationsIntro.textContent = gameState.maxSituations; }
-    if (situationCounter) { situationCounter.textContent = `${gameState.currentSituation}/${gameState.maxSituations}`; }
-    if (acvValue) { acvValue.textContent = `$${gameState.acv}k / $${gameState.targetAcv}k`; }
+    // Elements should be cached by DOMContentLoaded listener before this runs
+    if (!totalSituationsIntro || !situationCounter || !acvValue) {
+        console.warn("initializeGame: Some elements not ready yet.");
+        return; // Don't try to update text content if elements aren't there
+    }
+    totalSituationsIntro.textContent = gameState.maxSituations;
+    situationCounter.textContent = `${gameState.currentSituation}/${gameState.maxSituations}`;
+    acvValue.textContent = `$${gameState.acv}k / $${gameState.targetAcv}k`;
     updateUI();
 }
 
 // --- Event Listeners ---
 function setupEventListeners() {
-     if (!startGameButton) cacheDOMElements();
-    if(startGameButton) { startGameButton.addEventListener('click', startGame); } else { console.error("Start button not found!"); }
-    if(restartGameButton) { restartGameButton.addEventListener('click', restartGame); } else { console.error("Restart button not found!"); }
+    // Elements should be cached by DOMContentLoaded listener
+    if (!startGameButton || !restartGameButton) {
+         console.error("setupEventListeners: Buttons not found!");
+         return;
+    }
+    startGameButton.addEventListener('click', startGame);
+    restartGameButton.addEventListener('click', restartGame);
+    console.log("Event listeners attached."); // DEBUG
 }
 
 // --- Game Logic Functions ---
 function startGame() {
-    if (!introSection || !gameContainer) cacheDOMElements();
+    console.log("startGame called"); // DEBUG
+    // Elements should be cached already
+    if (!introSection || !gameContainer) {
+        console.error("StartGame: Intro or Game container not found!");
+        return;
+    }
     introSection.style.display = 'none';
     gameContainer.style.display = 'flex';
+    console.log("Display styles updated"); // DEBUG
     resetGameState();
+    console.log("Game state reset"); // DEBUG
     loadSituation(gameState.currentSituation);
-    updateUI();
+    console.log("Situation 1 loaded"); // DEBUG
+    // updateUI is called within resetGameState
 }
 
 function resetGameState() {
      gameState.currentSituation = 1;
      gameState.stamina = 100;
      gameState.acv = 0;
+     gameState.totalOpportunityIncrease = 0;
      gameState.aeRelationships = { "Carlos": 3, "Laura": 3, "Miguel": 3 };
      gameState.situationHistory = [];
      if(gameContent) gameContent.innerHTML = '';
      if(gameOverScreen) gameOverScreen.style.display = 'none';
      if(gameContent) gameContent.style.display = 'block';
-     updateUI();
+     updateUI(); // Update UI after resetting state
 }
 
 function restartGame() {
+    console.log("restartGame called"); // DEBUG
     resetGameState();
     loadSituation(gameState.currentSituation);
 }
 
 
 function loadSituation(situationId) {
-     if (!gameContent) cacheDOMElements();
-     const situation = situations.find(s => s.id === situationId);
-     if (!situation) { console.error(`Situation ${situationId} not found!`); gameContent.innerHTML = `<p style='color:red;'>Error: Situación ${situationId} no encontrada.</p>`; return; }
+    console.log(`Loading situation ${situationId}`); // DEBUG
+    if (!gameContent) { console.error("loadSituation: gameContent not found"); return; }
 
-     // --- MODIFIED HTML Generation for Chat Bubble ---
-     let html = `<div class="situation">`;
-     html += `<div class="situation-title">${situation.title}</div>`;
-     html += `<div class="situation-body">`;
-     html += `<img class="situation-image" src="img/${situation.id}.png" alt="Imagen para situación ${situation.id}">`;
-     // Wrap description in its own div inside the bubble
-     html += `<div class="chat-bubble chat-ae">
-                <div class="chat-name">${situation.ae}</div>
-                <div class="chat-text">${situation.description}</div>
-              </div>`;
-     html += `</div>`; // End situation-body
-     html += `<div class="options">`;
-     situation.options.forEach((option, index) => { html += `<div class="option" data-index="${index}"><span class="option-number">${index + 1}</span><span>${option.text}</span></div>`; });
-     html += `</div>`; // End options
-     html += `</div>`; // End situation
+    const situation = situations.find(s => s.id === situationId);
+    if (!situation) { console.error(`Situation ${situationId} not found!`); gameContent.innerHTML = `<p style='color:red;'>Error: Situación ${situationId} no encontrada.</p>`; return; }
 
-     gameContent.innerHTML = html;
-     gameContent.scrollTop = 0;
+    let html = `<div class="situation">`;
+    html += `<div class="situation-title">${situation.title}</div>`;
+    html += `<div class="situation-body">`;
+    html += `<img class="situation-image" src="img/${situation.id}.png" alt="Imagen para situación ${situation.id}" onerror="this.style.display='none'; console.error('Failed to load image: img/${situation.id}.png')">`; // Added onerror
+    html += `<div class="chat-bubble chat-ae">
+               <div class="chat-name">${situation.ae}</div>
+               <div class="chat-text">${situation.description}</div>
+             </div>`;
+    html += `</div>`;
+    html += `<div class="options">`;
+    situation.options.forEach((option, index) => { html += `<div class="option" data-index="${index}"><span class="option-number">${index + 1}</span><span>${option.text}</span></div>`; });
+    html += `</div>`;
+    html += `</div>`;
 
-     // Add listeners AFTER content is in DOM
-     document.querySelectorAll('.option').forEach(optionElement => {
-         optionElement.addEventListener('click', function() {
-             if (this.classList.contains('selected') || gameContent.querySelector('#next-situation')) { return; }
-             selectOption(situation, parseInt(this.dataset.index));
-             document.querySelectorAll('.option').forEach(opt => { opt.style.pointerEvents = 'none'; if (!opt.classList.contains('selected')) { opt.style.opacity = '0.6'; } });
-         });
-     });
+    gameContent.innerHTML = html;
+    gameContent.scrollTop = 0;
+
+    // Add listeners AFTER content is in DOM
+    document.querySelectorAll('.option').forEach(optionElement => {
+        optionElement.addEventListener('click', function() {
+            // Basic check to prevent multiple clicks after outcome is shown
+            if (gameContent.querySelector('.outcome')) { return; }
+            selectOption(situation, parseInt(this.dataset.index));
+            // Disable options visually after click
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                if (!opt.isSameNode(optionElement)) { // Dim non-selected options
+                    opt.style.opacity = '0.6';
+                } else {
+                    opt.classList.add('selected'); // Highlight selected
+                }
+            });
+        });
+    });
+    console.log(`Situation ${situationId} loaded successfully.`); // DEBUG
 }
 
 
 function selectOption(situation, optionIndex) {
-    // (No changes needed in this function from the previous version)
+    console.log(`Option ${optionIndex + 1} selected for situation ${situation.id}`); // DEBUG
     const option = situation.options[optionIndex];
     if (!option || !option.impacts) { console.error("Invalid option/impacts:", situation, optionIndex); return; }
 
+    // Apply impacts
     if (typeof option.impacts.stamina === 'number') { gameState.stamina = Math.max(0, Math.min(100, gameState.stamina + option.impacts.stamina)); }
     if (typeof option.impacts.acv === 'number') { gameState.acv = Math.max(0, gameState.acv + option.impacts.acv); }
     const updateAEHearts = (aeName, change) => { if (gameState.aeRelationships.hasOwnProperty(aeName)) { gameState.aeRelationships[aeName] = Math.max(0, Math.min(gameState.maxHearts, gameState.aeRelationships[aeName] + change)); } };
     if (typeof option.impacts.aeRelationship === 'object') { for (const [ae, value] of Object.entries(option.impacts.aeRelationship)) { updateAEHearts(ae, value); } }
 
+    // Accumulate opportunity increase
+    if (typeof option.impacts.opportunity === 'string') {
+        const opportunityValue = parseInt(option.impacts.opportunity.replace(/[+%()A-Za-z\s]/g, '')) || 0; // More robust parsing
+        if (opportunityValue > 0) { gameState.totalOpportunityIncrease += opportunityValue; }
+    }
+
     gameState.situationHistory.push({ situationId: situation.id, optionSelected: optionIndex, impacts: option.impacts });
-    updateUI();
-    displayOutcome(situation, option);
-    checkGameOver();
+
+    console.log("State updated:", JSON.stringify(gameState)); // DEBUG state change
+    updateUI(); // Update dashboard immediately
+    console.log("UI updated after state change"); // DEBUG
+    displayOutcome(situation, option); // Display outcome text/impacts
+    console.log("Outcome displayed"); // DEBUG
+    checkGameOver(); // Check if game ended
+    console.log("Game over checked"); // DEBUG
 }
 
 
 function displayOutcome(situation, option) {
-    // (No changes needed in this function from the previous version)
-     if (!gameContent) cacheDOMElements();
-    const selectedOptionElement = gameContent.querySelector(`.option[data-index="${situation.options.indexOf(option)}"]`);
-    if (selectedOptionElement) { selectedOptionElement.classList.add('selected'); }
+    // (No functional changes needed here from the previous version)
+    if (!gameContent) cacheDOMElements();
 
     let outcomeHTML = `<div class="outcome"> <div class="outcome-title">Resultado</div>`;
     outcomeHTML += `<div class="chat-bubble chat-se"> <div class="chat-name">Tú (Acción/Resultado)</div> ${option.outcome} </div>`;
     outcomeHTML += `<div class="impact">`;
-
     const impacts = option.impacts;
     if (typeof impacts.stamina === 'number') { const change = impacts.stamina; const cl = change > 0 ? 'positive' : (change < 0 ? 'negative' : 'neutral'); const sign = change > 0 ? '+' : ''; const icon = change > 0 ? '🔋' : (change < 0 ? '😩' : '😐'); outcomeHTML += `<div class="impact-item"><span class="impact-icon ${cl}">${icon}</span><div><span class="tooltip">Estamina<span class="tooltiptext">Tu energía.</span></span>: <span class="${cl}">${sign}${change}%</span></div></div>`; }
-    if (typeof impacts.acv === 'number' && impacts.acv !== 0) { const change = impacts.acv; const cl = change > 0 ? 'positive' : 'negative'; const sign = change > 0 ? '+' : ''; outcomeHTML += `<div class="impact-item"><span class="impact-icon ${cl}">💰</span><div><span class="tooltip">ACV<span class="tooltiptext">Valor del contrato anual.</span></span>: <span class="${cl}">${sign}${change}k</span></div></div>`; }
-    if (typeof impacts.opportunity === 'string') { const val = parseInt(impacts.opportunity) || 0; const cl = val > 0 ? 'positive' : (val < 0 ? 'negative' : 'neutral'); const icon = val > 0 ? '📈' : (val < 0 ? '📉' : '📊'); outcomeHTML += `<div class="impact-item"><span class="impact-icon ${cl}">${icon}</span><div><span class="tooltip">Oportunidad<span class="tooltiptext">Probabilidad de cierre.</span></span>: <span class="${cl}">${impacts.opportunity}</span></div></div>`; }
+    if (typeof impacts.acv === 'number' && impacts.acv !== 0) { const change = impacts.acv; const cl = change > 0 ? 'positive' : 'negative'; const sign = change > 0 ? '+' : ''; outcomeHTML += `<div class="impact-item"><span class="impact-icon ${cl}">💰</span><div><span class="tooltip">ACV Directo<span class="tooltiptext">ACV ganado directamente.</span></span>: <span class="${cl}">${sign}${change}k</span></div></div>`; }
+    if (typeof impacts.opportunity === 'string') { const val = parseInt(impacts.opportunity.replace(/[+%()A-Za-z\s]/g, '')) || 0; const cl = val > 0 ? 'positive' : (val < 0 ? 'negative' : 'neutral'); const icon = val > 0 ? '📈' : (val < 0 ? '📉' : '📊'); outcomeHTML += `<div class="impact-item"><span class="impact-icon ${cl}">${icon}</span><div><span class="tooltip">Oportunidad<span class="tooltiptext">Impacto en % cierre.</span></span>: <span class="${cl}">${impacts.opportunity}</span></div></div>`; }
     const processAERelHearts = (ae, value) => { if (value === 0) return ''; const cl = value > 0 ? 'positive' : 'negative'; const sign = value > 0 ? '+' : ''; const heartIcon = value > 0 ? '❤️' : '💔'; return `<div class="impact-item"><span class="impact-icon ${cl}">${heartIcon}</span><div><span class="tooltip">Rel. ${ae}<span class="tooltiptext">Relación con ${ae}.</span></span>: <span class="${cl}">${sign}${Math.abs(value)} ${Math.abs(value) > 1 ? 'corazones' : 'corazón'}</span></div></div>`; };
     if (typeof impacts.aeRelationship === 'object') { for (const [ae, value] of Object.entries(impacts.aeRelationship)) { outcomeHTML += processAERelHearts(ae, value); } }
-
-    outcomeHTML += `</div> `;
+    outcomeHTML += `</div>`; // End impact
 
     const isLastSituation = gameState.currentSituation >= gameState.maxSituations;
     const isGameOver = gameState.stamina <= 0 || Object.values(gameState.aeRelationships).filter(h => h <= 0).length >= 2;
 
     if (!isGameOver) { outcomeHTML += `<button id="next-situation" class="button">${isLastSituation ? 'Ver Puntuación Final' : 'Siguiente Situación'}</button>`; }
     else { let gameOverMsg = isGameOver && gameState.stamina <= 0 ? "¡Estamina Agotada!" : "¡Relaciones rotas!"; outcomeHTML += `<p style='margin-top:15px; text-align:center; color: var(--danger); font-weight:bold;'>${gameOverMsg}</p>`; }
-    outcomeHTML += `</div> `;
+    outcomeHTML += `</div>`; // End outcome
 
     gameContent.insertAdjacentHTML('beforeend', outcomeHTML);
 
     const outcomeElement = gameContent.querySelector('.outcome:last-of-type');
     if (outcomeElement) { outcomeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
 
+    // Add listener to the NEW button
     const nextButton = gameContent.querySelector('#next-situation');
     if (nextButton) {
         nextButton.addEventListener('click', function() {
             this.disabled = true;
             if (isLastSituation) { showGameComplete(); }
-            else { gameState.currentSituation++; loadSituation(gameState.currentSituation); updateUI(); }
+            else { gameState.currentSituation++; loadSituation(gameState.currentSituation); updateUI(); } // updateUI called after loading next situation
         });
     }
 }
@@ -195,13 +242,16 @@ function displayOutcome(situation, option) {
 function updateUI() {
     // (No changes needed in this function from the previous version)
     if (!staminaBar || !acvBar || !ae1Hearts || !ae2Hearts || !ae3Hearts) cacheDOMElements();
-    if (!staminaBar || !acvBar || !ae1Hearts || !ae2Hearts || !ae3Hearts) return;
+    if (!staminaBar || !acvBar || !ae1Hearts || !ae2Hearts || !ae3Hearts || !staminaValue || !acvValue || !situationCounter) {
+        console.warn("updateUI: Skipping update, elements missing.");
+        return;
+    }
 
     staminaBar.style.width = `${gameState.stamina}%`;
     staminaValue.textContent = `${gameState.stamina}%`;
     if (gameState.stamina < 30) staminaBar.style.backgroundColor = 'var(--danger)'; else if (gameState.stamina < 60) staminaBar.style.backgroundColor = 'var(--warning)'; else staminaBar.style.backgroundColor = 'var(--success)';
-    const acvPercentage = gameState.targetAcv > 0 ? Math.min(100, (gameState.acv / gameState.targetAcv) * 100) : 0;
-    acvBar.style.width = `${acvPercentage}%`;
+    const acvDirectPercentage = gameState.targetAcv > 0 ? Math.min(100, (gameState.acv / gameState.targetAcv) * 100) : 0;
+    acvBar.style.width = `${acvDirectPercentage}%`;
     acvValue.textContent = `$${gameState.acv}k / $${gameState.targetAcv}k`;
 
     const heartElements = { "Carlos": ae1Hearts, "Laura": ae2Hearts, "Miguel": ae3Hearts };
@@ -215,25 +265,35 @@ function updateUI() {
                 heartsHTML += `<span class="heart ${heartClass}">❤️</span>`;
             }
             container.innerHTML = heartsHTML;
+        } else {
+            console.warn(`Heart container for ${aeName} not found.`); // Warn if container missing
         }
     }
-
     situationCounter.textContent = `${gameState.currentSituation}/${gameState.maxSituations}`;
 }
 
 
-function calculateFinalScore() {
-    // (No changes needed in this function from the previous version)
+function calculateFinalScore() { // This function is now only for calculation, not display logic
     const staminaWeight = 0.40; const acvWeight = 0.35; const relationWeight = 0.25;
     const currentStamina = Math.max(0, gameState.stamina);
-    const staminaScore = (currentStamina / 100) * staminaWeight * 100;
-    const acvProgress = gameState.targetAcv > 0 ? Math.min(1, gameState.acv / gameState.targetAcv) : 0;
-    const acvScore = acvProgress * acvWeight * 100;
+    const staminaPoints = (currentStamina >= 94) ? 30 : Math.max(0, Math.min(30, Math.round((currentStamina / 94) * 30)));
+
+    // Use final calculated ACV for score
+    const guaranteedACV = gameState.acv;
+    const variableACV = gameState.maxPossibleOpportunityIncrease > 0 ? Math.round((gameState.totalOpportunityIncrease / gameState.maxPossibleOpportunityIncrease) * 400) : 0;
+    const finalCalculatedACV = guaranteedACV + variableACV;
+    const acvPoints = Math.max(0, Math.min(30, Math.round((finalCalculatedACV / 500) * 30))); // Use calculated ACV
+
     const avgHearts = (gameState.aeRelationships.Carlos + gameState.aeRelationships.Laura + gameState.aeRelationships.Miguel) / 3;
-    const relationshipScore = (avgHearts / gameState.maxHearts) * relationWeight * 100;
-    const totalScore = Math.max(0, Math.min(100, Math.round(staminaScore + acvScore + relationshipScore)));
-    console.log(`Score Breakdown: Stamina=${staminaScore.toFixed(1)}, ACV=${acvScore.toFixed(1)}, Relation=${relationshipScore.toFixed(1)} -> Total: ${totalScore}`);
-    return totalScore;
+    const relationPoints = Math.max(0, Math.min(10, Math.round((avgHearts / gameState.maxHearts) * 10)));
+
+    // Calculate total score based on game ending condition (passed as argument or determined here)
+    // For simplicity now, we calculate the base score. Completion points added in showGameOver/showGameComplete.
+    const baseScore = staminaPoints + acvPoints + relationPoints;
+    const totalScore = Math.min(100, Math.round(baseScore)); // Cap base score calculation too. Completion points added later.
+
+    console.log(`Score Calculation: Stamina=${staminaPoints}, ACV=${acvPoints} (based on ${finalCalculatedACV}k), Relation=${relationPoints}`);
+    return { totalScore: totalScore, staminaPoints: staminaPoints, acvPoints: acvPoints, relationPoints: relationPoints, finalCalculatedACV: finalCalculatedACV }; // Return breakdown
 }
 
 
@@ -247,35 +307,146 @@ function checkGameOver() {
 }
 
 
+// --- MODIFIED: Calculate Base Score (before scaling) ---
+function calculateBaseScore(completionStatus) {
+    // Constants for scoring components
+    const completionValue = completionStatus ? 30 : 0; // Use flag passed from showGameOver/showGameComplete
+    const maxStaminaScore = 30;
+    const maxAcvScore = 30;
+    const maxRelationScore = 10;
+    const staminaBenchmark = 94; // Stamina level for max points
+    const acvTargetForScore = 500; // Target ACV for max points
+
+    // Calculate Stamina Points
+    const finalStamina = Math.max(0, gameState.stamina);
+    const staminaPoints = (finalStamina >= staminaBenchmark)
+        ? maxStaminaScore
+        : Math.max(0, Math.round((finalStamina / staminaBenchmark) * maxStaminaScore));
+
+    // Calculate Final ACV (including opportunity part)
+    const guaranteedACV = gameState.acv;
+    const variableACV = gameState.maxPossibleOpportunityIncrease > 0
+        ? Math.round((gameState.totalOpportunityIncrease / gameState.maxPossibleOpportunityIncrease) * 400)
+        : 0;
+    const finalCalculatedACV = guaranteedACV + variableACV;
+
+    // Calculate ACV Points
+    const acvPoints = (acvTargetForScore > 0)
+        ? Math.max(0, Math.round((finalCalculatedACV / acvTargetForScore) * maxAcvScore))
+        : 0;
+
+    // Calculate Relation Points
+    const avgHearts = (gameState.aeRelationships.Carlos + gameState.aeRelationships.Laura + gameState.aeRelationships.Miguel) / 3;
+    const relationPoints = (gameState.maxHearts > 0)
+        ? Math.max(0, Math.round((avgHearts / gameState.maxHearts) * maxRelationScore))
+        : 0;
+
+    // Calculate initial total score based on components
+    const baseScore = completionValue + staminaPoints + acvPoints + relationPoints;
+
+    console.log(`Base Score Calc: Completion=${completionValue}, Stamina=${staminaPoints}, ACV=${acvPoints}(${finalCalculatedACV}k), Relation=${relationPoints} -> Base Total: ${baseScore}`);
+
+    // Return relevant data
+    return {
+        baseScore: baseScore, // The score before rescaling
+        finalCalculatedACV: finalCalculatedACV,
+        finalStamina: finalStamina,
+        avgHearts: avgHearts
+    };
+}
+
+// --- MODIFIED: Apply Scaling to Base Score ---
+function scaleScore(originalScore) {
+    const minInput = 10; // Min score observed in simulation
+    const maxInput = 70; // Max score observed in simulation
+    const minOutput = 0;
+    const maxOutput = 100;
+
+    let scaledScore;
+
+    if (originalScore <= minInput) {
+        scaledScore = minOutput;
+    } else if (originalScore >= maxInput) {
+        scaledScore = maxOutput;
+    } else {
+        // Linear interpolation
+        scaledScore = minOutput + ((originalScore - minInput) / (maxInput - minInput)) * (maxOutput - minOutput);
+    }
+
+    // Round and ensure it's within 0-100
+    const finalDisplayScore = Math.max(0, Math.min(100, Math.round(scaledScore)));
+    console.log(`Original Score: ${originalScore}, Scaled Score: ${finalDisplayScore}`); // Debug scaling
+    return finalDisplayScore;
+}
+
+
+// --- MODIFIED Game End Functions (to use new score calculation and scaling) ---
 function showGameOver(reason) {
-    // (No changes needed in this function from the previous version)
-     if (!finalTitle || !finalScoreValue || !gameOverScreen) cacheDOMElements(); if (!finalTitle) return;
-    const finalScore = calculateFinalScore();
-    finalTitle.textContent = "¡Fin de la Jornada!"; gameOverReason.textContent = reason; finalScoreValue.textContent = finalScore; outcomeEmoji.textContent = "☠️";
-    finalAcv.textContent = `$${gameState.acv}k`; const finalSituationNum = Math.min(gameState.currentSituation, gameState.maxSituations); finalSituations.textContent = `${finalSituationNum}/${gameState.maxSituations}`; finalStamina.textContent = `${gameState.stamina}%`;
-    const avgHearts = ((gameState.aeRelationships.Carlos + gameState.aeRelationships.Laura + gameState.aeRelationships.Miguel) / 3).toFixed(1); finalAvgRelation.textContent = `${avgHearts}/${gameState.maxHearts}`;
-    gameOverScreen.style.display = 'flex'; if(gameContent) gameContent.style.display = 'none';
+     if (!finalTitle || !finalScoreValue || !gameOverScreen) cacheDOMElements();
+     if (!finalTitle) { console.error("showGameOver: Final screen elements not found"); return; }
+
+    // Calculate base score data, passing completionStatus = false
+    const scoreData = calculateBaseScore(false);
+    // Scale the base score for display
+    const finalDisplayScore = scaleScore(scoreData.baseScore);
+
+    // --- Update Display ---
+    finalTitle.textContent = "¡Fin de la Jornada!";
+    gameOverReason.textContent = reason;
+    finalScoreValue.textContent = finalDisplayScore; // Show scaled score
+    outcomeEmoji.textContent = "☠️";
+
+    finalAcv.textContent = `$${scoreData.finalCalculatedACV}k`;
+    const finalSituationNum = Math.min(gameState.currentSituation, gameState.maxSituations);
+    finalSituations.textContent = `${finalSituationNum}/${gameState.maxSituations}`;
+    finalStamina.textContent = `${scoreData.finalStamina}%`;
+    finalAvgRelation.textContent = `${scoreData.avgHearts.toFixed(1)}/${gameState.maxHearts}`;
+
+    gameOverScreen.style.display = 'flex';
+    if(gameContent) gameContent.style.display = 'none';
 }
 
 
 function showGameComplete() {
-    // (No changes needed in this function from the previous version)
-     if (!finalTitle || !finalScoreValue || !gameOverScreen) cacheDOMElements(); if (!finalTitle) return;
-     const finalScore = calculateFinalScore(); let reason = ""; let emoji = "🤔";
-     if (finalScore >= 90) { finalTitle.textContent = "¡Leyenda del Presales!"; reason = `¡Increíble! Has dominado cada aspecto del rol. ACV por las nubes, relaciones excelentes y energía de sobra. ¡Eres una máquina!`; emoji = "🏆"; }
-     else if (finalScore >= 75) { finalTitle.textContent = "¡Excelente Desempeño!"; reason = `¡Muy bien hecho! Has logrado un gran equilibrio entre resultados, relaciones y bienestar. Un Solution Engineer muy valioso.`; emoji = "🎉"; }
-     else if (finalScore >= 50) { finalTitle.textContent = "¡Trabajo Sólido!"; reason = `Has completado la aventura con resultados decentes. Hay áreas de mejora, pero has demostrado ser competente. ¡Sigue así!`; emoji = "👍"; }
-     else { finalTitle.textContent = "¡Aventura Superada!"; reason = `Has llegado al final, ¡que no es poco! Sin embargo, los resultados generales son mejorables. ¡Cada día es una oportunidad para aprender!`; emoji = "😬"; }
-     gameOverReason.textContent = reason; finalScoreValue.textContent = finalScore; outcomeEmoji.textContent = emoji;
-     finalAcv.textContent = `$${gameState.acv}k`; finalSituations.textContent = `${gameState.maxSituations}/${gameState.maxSituations}`; finalStamina.textContent = `${gameState.stamina}%`;
-     const avgHearts = ((gameState.aeRelationships.Carlos + gameState.aeRelationships.Laura + gameState.aeRelationships.Miguel) / 3).toFixed(1); finalAvgRelation.textContent = `${avgHearts}/${gameState.maxHearts}`;
-     gameOverScreen.style.display = 'flex'; if(gameContent) gameContent.style.display = 'none';
+     if (!finalTitle || !finalScoreValue || !gameOverScreen) cacheDOMElements();
+     if (!finalTitle) { console.error("showGameComplete: Final screen elements not found"); return; }
+
+     // Calculate base score data, passing completionStatus = true
+     const scoreData = calculateBaseScore(true);
+     // Scale the base score for display
+     const finalDisplayScore = scaleScore(scoreData.baseScore);
+
+     // --- Determine Title/Emoji based on SCALED score ---
+     let reasonText = ""; let emoji = "🤔";
+     if (finalDisplayScore >= 90) { finalTitle.textContent = "¡Leyenda del Presales!"; reasonText = `¡Increíble! Has dominado cada aspecto del rol. ACV por las nubes, relaciones excelentes y energía de sobra. ¡Eres una máquina!`; emoji = "🏆"; }
+     else if (finalDisplayScore >= 75) { finalTitle.textContent = "¡Excelente Desempeño!"; reasonText = `¡Muy bien hecho! Has logrado un gran equilibrio entre resultados, relaciones y bienestar. Un Solution Engineer muy valioso.`; emoji = "🎉"; }
+     else if (finalDisplayScore >= 50) { finalTitle.textContent = "¡Trabajo Sólido!"; reasonText = `Has completado la aventura con resultados decentes. Hay áreas de mejora, pero has demostrado ser competente. ¡Sigue así!`; emoji = "👍"; }
+     else { finalTitle.textContent = "¡Aventura Superada!"; reasonText = `Has llegado al final, ¡que no es poco! Sin embargo, los resultados generales son mejorables. ¡Cada día es una oportunidad para aprender!`; emoji = "😬"; }
+
+     // --- Update Display ---
+     gameOverReason.textContent = reasonText;
+     finalScoreValue.textContent = finalDisplayScore; // Show scaled score
+     outcomeEmoji.textContent = emoji;
+
+     finalAcv.textContent = `$${scoreData.finalCalculatedACV}k`;
+     finalSituations.textContent = `${gameState.maxSituations}/${gameState.maxSituations}`;
+     finalStamina.textContent = `${scoreData.finalStamina}%`;
+     finalAvgRelation.textContent = `${scoreData.avgHearts.toFixed(1)}/${gameState.maxHearts}`;
+
+     gameOverScreen.style.display = 'flex';
+     if(gameContent) gameContent.style.display = 'none';
  }
 
 
 // --- Initial Setup on DOM Load ---
 document.addEventListener('DOMContentLoaded', () => {
-    cacheDOMElements();
-    setupEventListeners();
-    initializeGame();
+    console.log("DOM fully loaded and parsed"); // DEBUG
+    try {
+        cacheDOMElements();
+        setupEventListeners();
+        initializeGame();
+        console.log("Game initialization complete."); // DEBUG
+    } catch (error) {
+        console.error("Error during initialization:", error); // Catch potential errors
+    }
 });
