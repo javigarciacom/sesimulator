@@ -1,48 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 :root {
-    --primary: #4B0082;      /* Deep Purple */
-    --secondary: #9932CC;    /* Bright Purple */
-    --accent: #FF8C00;       /* Dark Orange */
-    --accent-light: #FFA500; /* Orange */
-    --dark: #191970;         /* Midnight Blue */
-    --light: #FFFACD;        /* Lemon Chiffon - old paper look */
-    --success: #228B22;      /* Forest Green */
-    --warning: #FFD700;      /* Gold */
-    --danger: #B22222;       /* Firebrick Red */
-    --text: #322;            /* Deep Brown */
-    --text-light: #F5F5DC;   /* Beige */
-    --wood-dark: #8B4513;    /* SaddleBrown */
-    --wood-light: #CD853F;   /* Peru */
-    --score-color: #FFD700;  /* Gold for score */
-    --heart-active: #FF69B4; /* HotPink */
-    /* No necesitamos color para inactivo si usamos visibility */
+    /* ... (variables sin cambios) ... */
+    --primary: #4B0082;
+    --secondary: #9932CC;
+    --accent: #FF8C00;
+    --accent-light: #FFA500;
+    --dark: #191970;
+    --light: #FFFACD;
+    --success: #228B22;
+    --warning: #FFD700;
+    --danger: #B22222;
+    --text: #322;
+    --text-light: #F5F5DC;
+    --wood-dark: #8B4513;
+    --wood-light: #CD853F;
+    --score-color: #FFD700;
+    --heart-active: #FF69B4;
+    --heart-inactive: #D3D3D3;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'VT323', monospace;
-    letter-spacing: 0.5px;
-}
-
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'VT323', monospace; letter-spacing: 0.5px; }
 html, body { height: 100%; }
-
-body {
-    background-color: #111; color: var(--text); line-height: 1.6; padding: 20px;
-    background-image: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/subtlenet2.png');
-    display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;
-}
+body { background-color: #111; color: var(--text); line-height: 1.6; padding: 20px; background-image: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/subtlenet2.png'); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
 
 /* --- Layout Principal --- */
-.container {
-    max-width: 960px; width: 100%; margin: 20px auto; background-color: var(--light);
-    border-radius: 8px; border: 6px solid var(--wood-dark);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 50px rgba(139, 69, 19, 0.1);
-    position: relative; overflow: hidden; display: flex; flex-direction: column;
-    max-height: calc(100vh - 40px);
-}
+.container { max-width: 960px; width: 100%; margin: 20px auto; background-color: var(--light); border-radius: 8px; border: 6px solid var(--wood-dark); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 0 50px rgba(139, 69, 19, 0.1); position: relative; overflow: hidden; display: flex; flex-direction: column; max-height: calc(100vh - 40px); }
 
 /* --- Intro --- */
 #intro { text-align: center; padding: 30px 25px; background-image: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/papyrus.png'); flex-shrink: 0; }
@@ -58,12 +41,7 @@ body {
 .game-title { font-size: 28px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); position: relative; z-index: 3; margin: 0; }
 
 /* --- Dashboard --- */
-.dashboard {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 15px; background: linear-gradient(to bottom, var(--wood-dark), var(--wood-light));
-    color: var(--text-light); border-bottom: 3px solid var(--wood-dark);
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); gap: 15px; flex-shrink: 0;
-}
+.dashboard { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; background: linear-gradient(to bottom, var(--wood-dark), var(--wood-light)); color: var(--text-light); border-bottom: 3px solid var(--wood-dark); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); gap: 15px; flex-shrink: 0; }
 .stat { text-align: center; position: relative; z-index: 1; padding: 0; flex-shrink: 0; }
 .stat-label { font-size: 13px; margin-bottom: 4px; opacity: 0.8; text-shadow: none; white-space: nowrap; }
 .stat-value { font-size: 18px; }
@@ -71,38 +49,18 @@ body {
 .stat-progress { flex-basis: 28%; min-width: 100px; }
 .stat-progress:nth-child(3) { margin-left: 15px; }
 .stat-ae { flex-basis: auto; min-width: 140px; text-align: left; margin-left: auto; }
-
-/* Barras Estamina/ACV */
 .progress-bar { width: 100%; height: 16px; background-color: rgba(0, 0, 0, 0.2); border-radius: 8px; margin: 0; overflow: hidden; border: 1px solid rgba(0, 0, 0, 0.3); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); }
 .progress { height: 100%; transition: width 0.5s ease-in-out, background-color 0.5s ease; box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3); background-image: linear-gradient( 45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent ); background-size: 15px 15px; animation: progress-bar-stripes 1s linear infinite; }
 @keyframes progress-bar-stripes { from { background-position: 0 0; } to { background-position: 15px 0; } }
 .stamina-progress { background-color: var(--success); }
 .acv-progress { background-color: var(--accent); }
-
-/* Estilos Corazones AE */
 .ae-group { display: flex; flex-direction: column; gap: 3px; margin-top: 4px; }
 .ae-container { display: flex; align-items: center; justify-content: flex-start; gap: 5px; }
 .ae-name { width: 50px; font-size: 12px; text-align: right; flex-shrink: 0; opacity: 0.9; margin-right: 4px; }
 .hearts-container { display: flex; align-items: center; gap: 1px; }
-.heart {
-    font-size: 15px; line-height: 1; display: inline-block;
-    transition: color 0.3s ease, visibility 0s; /* Añadido visibility a transition */
-    text-shadow: none;
-    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-    /* IMPORTANTE: Asegurar que el espacio se mantiene */
-    min-width: 16px; /* Ancho mínimo para asegurar espacio */
-    text-align: center;
-}
-/* CORRECCIÓN: Estilos para activo/inactivo usando visibility */
-.heart.active {
-    color: var(--heart-active);
-    visibility: visible; /* Asegura que sea visible */
-}
-.heart.inactive {
-    visibility: hidden; /* Oculta el corazón pero MANTIENE EL ESPACIO */
-    /* No necesita color si está oculto */
-}
-
+.heart { font-size: 15px; line-height: 1; display: inline-block; transition: color 0.3s ease, visibility 0s; text-shadow: none; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif; min-width: 16px; text-align: center; }
+.heart.active { color: var(--heart-active); visibility: visible; }
+.heart.inactive { visibility: hidden; } /* Oculta pero reserva espacio */
 
 /* --- Área de Contenido --- */
 .content { padding: 20px 25px; background-image: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/papyrus.png'); background-color: var(--light); overflow-y: auto; flex-grow: 1; }
@@ -111,6 +69,22 @@ body {
 .situation-body { display: flex; align-items: flex-start; gap: 20px; margin-top: 15px; margin-bottom: 20px; }
 .situation-image { width: 450px; max-width: 45%; height: auto; object-fit: contain; border: 3px solid var(--wood-light); border-radius: 4px; background-color: #ddd; flex-shrink: 0; }
 .situation-body .chat-bubble { flex-grow: 1; margin-bottom: 0; max-width: 100%; }
+
+/* --- Estilos Chat --- */
+.chat-bubble { position: relative; padding: 15px 18px; border-radius: 12px; max-width: 100%; font-size: 17px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); line-height: 1.5; }
+.chat-ae { background-color: #E6F7FF; border: 2px solid #BEE3F8; }
+.chat-ae:after { content: ''; position: absolute; top: 0; right: -10px; width: 0; height: 0; border-width: 10px 0 0 10px; border-style: solid; border-color: transparent transparent transparent #BEE3F8; }
+.chat-se { background-color: #E6FFED; border: 2px solid #C6F6D5; }
+.chat-se:after { content: ''; position: absolute; top: 0; left: -10px; width: 0; height: 0; border-width: 10px 10px 0 0; border-style: solid; border-color: #C6F6D5 transparent transparent transparent; }
+.chat-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; display: block; /* Hace que ocupe su línea */ padding: 3px 8px; border-radius: 4px; text-shadow: none; display: inline-block; /* Restablecido a inline-block para estilo original */ }
+.chat-ae .chat-name { color: white; background-color: var(--secondary); }
+.chat-se .chat-name { color: white; background-color: var(--success); }
+/* --- NUEVA REGLA para el texto de la descripción --- */
+.chat-text {
+    display: block; /* Asegura que empiece en nueva línea */
+    padding-top: 5px; /* Pequeño espacio respecto al nombre */
+}
+
 
 /* --- Opciones, Outcome, etc. (sin cambios) --- */
 .options { margin-top: 20px; }
@@ -147,16 +121,6 @@ body {
 .final-stat .stat-label { font-size: 15px; margin-bottom: 5px; color: #ccc; text-shadow: none; }
 .final-value { font-size: 24px; font-weight: bold; color: var(--accent-light); text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
 .game-over .button { margin-top: 15px; }
-
-/* --- Chat --- */
-.chat-bubble { position: relative; padding: 15px 18px; border-radius: 12px; max-width: 100%; font-size: 17px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); line-height: 1.5; }
-.chat-ae { background-color: #E6F7FF; border: 2px solid #BEE3F8; }
-.chat-ae:after { content: ''; position: absolute; top: 0; right: -10px; width: 0; height: 0; border-width: 10px 0 0 10px; border-style: solid; border-color: transparent transparent transparent #BEE3F8; }
-.chat-se { background-color: #E6FFED; border: 2px solid #C6F6D5; }
-.chat-se:after { content: ''; position: absolute; top: 0; left: -10px; width: 0; height: 0; border-width: 10px 10px 0 0; border-style: solid; border-color: #C6F6D5 transparent transparent transparent; }
-.chat-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; display: inline-block; padding: 3px 8px; border-radius: 4px; text-shadow: none; }
-.chat-ae .chat-name { color: white; background-color: var(--secondary); }
-.chat-se .chat-name { color: white; background-color: var(--success); }
 
 /* --- Tooltips & Icons --- */
 .tooltip { position: relative; display: inline-block; }
