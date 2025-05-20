@@ -128,3 +128,249 @@ body { background-color: #111; color: var(--text); line-height: 1.6; padding: 20
 .tooltip .tooltiptext::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #555 transparent transparent transparent; }
 .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
 .skull-icon { position: absolute; font-size: 20px; pointer-events: none; z-index: 0; opacity: 0.05; }
+
+/* --- Media Queries para Responsividad --- */
+
+/* Para tablets y móviles grandes (hasta 768px) */
+@media (max-width: 768px) {
+    body {
+        padding: 10px; /* Reducir padding general del body */
+    }
+
+    .container {
+        margin: 10px auto;
+        max-height: none; /* Permitir que el contenedor crezca verticalmente si es necesario */
+    }
+
+    /* --- Intro --- */
+    .intro h1 {
+        font-size: 30px;
+    }
+    .intro p {
+        font-size: 16px;
+    }
+    .intro-image {
+        width: 90%; /* Hacer la imagen de intro más fluida */
+        max-width: 350px; /* Un máximo para que no sea demasiado grande */
+    }
+
+    /* --- Header del Juego --- */
+    .game-title {
+        font-size: 24px;
+    }
+
+    /* --- Dashboard --- */
+    .dashboard {
+        flex-wrap: wrap; /* Permitir que los elementos del dashboard se envuelvan */
+        padding: 10px;
+        gap: 10px; /* Reducir el espacio entre elementos */
+    }
+
+    .stat {
+        flex-basis: calc(50% - 10px); /* Dos stats por fila aprox. */
+        font-size: 14px; /* Reducir tamaño de fuente general de stats */
+    }
+    .stat-label {
+        font-size: 12px;
+    }
+    .stat-value {
+        font-size: 16px;
+    }
+
+    .stat:nth-child(1) { /* Situación Counter */
+        flex-basis: calc(50% - 10px);
+        text-align: center;
+        margin-right: 0; /* Quitar margen auto */
+    }
+    .stat-progress { /* Stamina y ACV */
+        flex-basis: calc(50% - 10px);
+        min-width: 0; /* Permitir que se encojan más */
+        margin-left: 0 !important; /* Anular el margen izquierdo específico */
+    }
+    .stat-ae { /* Account Executives */
+        flex-basis: 100%; /* Que ocupe todo el ancho */
+        min-width: 0;
+        margin-left: 0; /* Quitar margen auto */
+        text-align: center; /* Centrar los AEs */
+    }
+    .ae-group {
+        justify-content: center; /* Centrar los nombres y corazones de AEs */
+        flex-direction: row; /* Poner AEs en fila si caben, o mantener columna y ajustar */
+        flex-wrap: wrap; /* Permitir que los AEs se envuelvan si son muchos */
+        gap: 10px;
+    }
+    .ae-container {
+        flex-direction: column; /* Nombre arriba, corazones abajo */
+        align-items: center; /* Centrar contenido de cada AE */
+    }
+    .ae-name {
+        width: auto; /* Ajustar ancho del nombre del AE */
+        text-align: center;
+        margin-right: 0;
+    }
+
+
+    /* --- Contenido del Juego (Situaciones) --- */
+    .content {
+        padding: 15px;
+    }
+    .situation-title {
+        font-size: 20px;
+    }
+    .situation-body {
+        flex-direction: column; /* Apilar imagen y burbuja de chat */
+        align-items: center; /* Centrar imagen y burbuja */
+        gap: 15px;
+    }
+    .situation-image {
+        width: 100%; /* Imagen ocupa todo el ancho disponible en la columna */
+        max-width: 100%; /* Asegurar que no se desborde */
+        height: auto;
+        order: 1; /* Opcional: si quieres la imagen primero */
+    }
+    .situation-body .chat-bubble {
+        width: 100%; /* Burbuja ocupa todo el ancho */
+        order: 2; /* Opcional: si quieres la burbuja después */
+    }
+    .chat-bubble {
+        font-size: 15px;
+    }
+    .chat-ae:after, .chat-se:after {
+        display: none; /* Ocultar las colas de las burbujas que pueden verse mal */
+    }
+
+    /* --- Opciones --- */
+    .option {
+        font-size: 15px;
+        padding: 10px 12px;
+    }
+    .option-number {
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        font-size: 14px;
+    }
+
+    /* --- Outcome --- */
+    .outcome-title {
+        font-size: 18px;
+    }
+    .impact-item {
+        flex-basis: calc(50% - 8px); /* Dos impactos por fila */
+        font-size: 14px;
+    }
+
+    /* --- Botones --- */
+    .button {
+        font-size: 16px;
+        padding: 10px 15px;
+    }
+
+    /* --- Pantalla Final (Game Over) --- */
+    .game-over h2 {
+        font-size: 28px;
+    }
+    .final-score-display {
+        font-size: 26px;
+    }
+    #final-score-value {
+        font-size: 60px;
+    }
+    .game-over p#game-over-reason {
+        font-size: 16px;
+    }
+    .final-stats {
+        width: 100%;
+        padding: 10px;
+    }
+    .final-stat {
+        flex-basis: calc(50% - 10px); /* Dos stats finales por fila */
+    }
+    .final-stat .stat-label {
+        font-size: 13px;
+    }
+    .final-value {
+        font-size: 20px;
+    }
+}
+
+/* Para móviles más pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    .intro h1 {
+        font-size: 26px;
+    }
+    .intro p {
+        font-size: 15px;
+    }
+
+    .game-title {
+        font-size: 20px;
+    }
+
+    .dashboard {
+        padding: 8px;
+        gap: 8px;
+    }
+    .stat {
+        flex-basis: 100%; /* Un stat por fila */
+        text-align: center;
+    }
+    .stat-progress { /* Stamina y ACV */
+        flex-basis: 100%;
+    }
+    .stat-ae {
+         text-align: center;
+    }
+    .ae-group {
+        justify-content: center;
+    }
+
+    .situation-title {
+        font-size: 18px;
+    }
+    .chat-bubble {
+        font-size: 14px;
+        padding: 12px 15px;
+    }
+    .option {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    .impact-item {
+        flex-basis: 100%; /* Un impacto por fila */
+        font-size: 13px;
+    }
+    .impact-icon {
+        font-size: 16px;
+    }
+
+    .button {
+        font-size: 15px;
+        width: 100%; /* Botones ocupan todo el ancho para facilitar el toque */
+        padding: 12px 15px;
+    }
+    #start-game, #restart-game { /* Si quieres que los botones de intro y game over también sean full width */
+        width: auto; /* O ajusta como prefieras, por defecto son inline-block */
+        padding: 10px 20px; /* Restaura si no los quieres full-width */
+    }
+
+    .game-over h2 {
+        font-size: 24px;
+    }
+    .final-score-display {
+        font-size: 22px;
+    }
+    #final-score-value {
+        font-size: 50px;
+    }
+    .game-over p#game-over-reason {
+        font-size: 14px;
+    }
+    .final-stat {
+        flex-basis: 100%; /* Un stat final por fila */
+    }
+    .final-value {
+        font-size: 18px;
+    }
+}
