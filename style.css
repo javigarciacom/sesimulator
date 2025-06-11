@@ -40,7 +40,7 @@ body { background-color: #111; color: var(--text); line-height: 1.6; padding: 20
 .header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('https://cdnjs.cloudflare.com/ajax/libs/pattern.css/1.0.0/img/crossword.png'); opacity: 0.1; z-index: 1; }
 .game-title { font-size: 28px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); position: relative; z-index: 3; margin: 0; }
 
-/* --- Dashboard --- */
+/* --- Dashboard (Desktop) --- */
 .dashboard { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; background: linear-gradient(to bottom, var(--wood-dark), var(--wood-light)); color: var(--text-light); border-bottom: 3px solid var(--wood-dark); box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); gap: 15px; flex-shrink: 0; }
 .stat { text-align: center; position: relative; z-index: 1; padding: 0; flex-shrink: 0; }
 .stat-label { font-size: 13px; margin-bottom: 4px; opacity: 0.8; text-shadow: none; white-space: nowrap; }
@@ -79,14 +79,9 @@ body { background-color: #111; color: var(--text); line-height: 1.6; padding: 20
 .chat-name { font-weight: bold; font-size: 14px; margin-bottom: 8px; display: block; /* Hace que ocupe su línea */ padding: 3px 8px; border-radius: 4px; text-shadow: none; display: inline-block; /* Restablecido a inline-block para estilo original */ }
 .chat-ae .chat-name { color: white; background-color: var(--secondary); }
 .chat-se .chat-name { color: white; background-color: var(--success); }
-/* --- NUEVA REGLA para el texto de la descripción --- */
-.chat-text {
-    display: block; /* Asegura que empiece en nueva línea */
-    padding-top: 5px; /* Pequeño espacio respecto al nombre */
-}
+.chat-text { display: block; padding-top: 5px; }
 
-
-/* --- Opciones, Outcome, etc. (sin cambios) --- */
+/* --- Opciones, Outcome, etc. --- */
 .options { margin-top: 20px; }
 .option { padding: 12px 15px; margin-bottom: 12px; background-color: var(--text-light); border: 3px solid var(--wood-light); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-size: 16px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); position: relative; line-height: 1.5; display: flex; align-items: center; }
 .option > span:last-child { flex-grow: 1; }
@@ -129,6 +124,7 @@ body { background-color: #111; color: var(--text); line-height: 1.6; padding: 20
 .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
 .skull-icon { position: absolute; font-size: 20px; pointer-events: none; z-index: 0; opacity: 0.05; }
 
+
 /* --- Media Queries para Responsividad --- */
 
 /* Para tablets y móviles grandes (hasta 768px) */
@@ -140,82 +136,143 @@ body { background-color: #111; color: var(--text); line-height: 1.6; padding: 20
     .container {
         margin: 10px auto;
         max-height: none; /* Permitir que el contenedor crezca verticalmente si es necesario */
+        border-width: 4px; /* Reducir borde del contenedor */
     }
 
     /* --- Intro --- */
     .intro h1 {
-        font-size: 30px;
+        font-size: 32px; /* Era 30px, aumentado a 32px */
     }
     .intro p {
-        font-size: 16px;
+        font-size: 18px; /* Era 16px, aumentado a 18px */
+        line-height: 1.6; /* Mejor espaciado entre líneas */
     }
     .intro-image {
         width: 90%; /* Hacer la imagen de intro más fluida */
         max-width: 350px; /* Un máximo para que no sea demasiado grande */
+        border-width: 2px;
     }
 
     /* --- Header del Juego --- */
     .game-title {
-        font-size: 24px;
+        font-size: 26px; /* Era 24px, aumentado a 26px */
+    }
+    .header {
+        padding: 8px 15px;
+        border-bottom-width: 3px;
     }
 
-    /* --- Dashboard --- */
+    /* --- Dashboard (Móvil - dos líneas) --- */
     .dashboard {
-        flex-wrap: wrap; /* Permitir que los elementos del dashboard se envuelvan */
-        padding: 10px;
-        gap: 10px; /* Reducir el espacio entre elementos */
+        display: flex;
+        flex-wrap: wrap;
+        padding: 10px 8px;
+        gap: 8px;
+        align-items: stretch; /* Items en misma fila misma altura */
+        border-bottom-width: 2px;
     }
 
-    .stat {
-        flex-basis: calc(50% - 10px); /* Dos stats por fila aprox. */
-        font-size: 14px; /* Reducir tamaño de fuente general de stats */
-    }
-    .stat-label {
-        font-size: 12px;
-    }
-    .stat-value {
-        font-size: 16px;
-    }
-
-    .stat:nth-child(1) { /* Situación Counter */
-        flex-basis: calc(50% - 10px);
+    /* Estilos para los items de la primera línea del dashboard */
+    .dashboard > .stat:nth-child(1), /* Situación */
+    .dashboard > .stat:nth-child(2), /* Estamina */
+    .dashboard > .stat:nth-child(3) { /* ACV */
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 0; /* Distribución equitativa */
+        min-width: 70px; /* Mínimo para que no se aplasten */
+        padding: 5px;
         text-align: center;
-        margin-right: 0; /* Quitar margen auto */
-    }
-    .stat-progress { /* Stamina y ACV */
-        flex-basis: calc(50% - 10px);
-        min-width: 0; /* Permitir que se encojan más */
-        margin-left: 0 !important; /* Anular el margen izquierdo específico */
-    }
-    .stat-ae { /* Account Executives */
-        flex-basis: 100%; /* Que ocupe todo el ancho */
-        min-width: 0;
-        margin-left: 0; /* Quitar margen auto */
-        text-align: center; /* Centrar los AEs */
-    }
-    .ae-group {
-        justify-content: center; /* Centrar los nombres y corazones de AEs */
-        flex-direction: row; /* Poner AEs en fila si caben, o mantener columna y ajustar */
-        flex-wrap: wrap; /* Permitir que los AEs se envuelvan si son muchos */
-        gap: 10px;
-    }
-    .ae-container {
-        flex-direction: column; /* Nombre arriba, corazones abajo */
-        align-items: center; /* Centrar contenido de cada AE */
-    }
-    .ae-name {
-        width: auto; /* Ajustar ancho del nombre del AE */
-        text-align: center;
-        margin-right: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 4px;
+        background-color: rgba(255,255,255,0.03);
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        order: 1; /* Primera línea */
     }
 
+    .dashboard > .stat.stat-progress:nth-child(2) .progress-bar, /* Ocultar barra estamina */
+    .dashboard > .stat.stat-progress:nth-child(3) .progress-bar { /* Ocultar barra ACV */
+        display: none;
+    }
+
+    .dashboard > .stat:nth-child(1) .stat-label, /* Situación Label */
+    .dashboard > .stat:nth-child(2) .stat-label, /* Estamina Label */
+    .dashboard > .stat:nth-child(3) .stat-label { /* ACV Label */
+        font-size: 13px; /* Era 11px, aumentado a 13px */
+        margin-bottom: 2px;
+        white-space: nowrap;
+        opacity: 0.9;
+    }
+    .dashboard > .stat:nth-child(1) .stat-value, /* Situación Value */
+    .dashboard > .stat:nth-child(2) .stat-value, /* Estamina Value */
+    .dashboard > .stat:nth-child(3) .stat-value { /* ACV Value */
+        font-size: 17px; /* Era 15px, aumentado a 17px */
+        font-weight: bold;
+        line-height: 1.2;
+    }
+
+    /* Estilos para la segunda línea del dashboard (AE Hearts) */
+    .dashboard > .stat-ae:nth-child(4) {
+        flex-basis: 100%;
+        order: 2; /* Segunda línea */
+        min-width: auto;
+        padding: 4px 0; /* Reducido de 8px a 4px */
+        margin-left: 0 !important;
+        text-align: center;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        margin-top: 4px; /* Reducido de 8px a 4px */
+    }
+
+    .dashboard > .stat-ae:nth-child(4) .ae-group {
+        display: flex;
+        flex-direction: row; /* CLAVE: Cambiar a fila horizontal */
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: nowrap; /* Evitar que se envuelvan en múltiples líneas */
+        gap: 8px; /* Gap entre cada comercial */
+        margin-top: 0px; /* Eliminar margen superior para acercar más */
+    }
+
+    .dashboard > .stat-ae:nth-child(4) .ae-container {
+        display: flex;
+        flex-direction: row; /* Cambiar a fila horizontal */
+        align-items: center;
+        min-width: auto; /* Permitir que se ajuste al contenido */
+        flex: 1; /* Distribuir equitativamente el espacio */
+        justify-content: center;
+    }
+
+    .dashboard > .stat-ae:nth-child(4) .ae-name {
+        width: auto;
+        text-align: right;
+        font-size: 11px; /* Reducir un poco para que quepa mejor */
+        margin-bottom: 0; /* Eliminar margen inferior */
+        margin-right: 3px; /* Pequeño margen a la derecha */
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .dashboard > .stat-ae:nth-child(4) .hearts-container {
+        display: flex;
+        gap: 1px; /* Reducir gap entre corazones */
+    }
+    .dashboard > .stat-ae:nth-child(4) .hearts-container .heart {
+        font-size: 13px; /* Reducir un poco para que quepa mejor */
+        min-width: 13px; /* Ajustar al nuevo tamaño */
+        line-height: 1;
+    }
+    /* Fin de nuevos estilos de Dashboard para 768px */
 
     /* --- Contenido del Juego (Situaciones) --- */
     .content {
         padding: 15px;
     }
     .situation-title {
-        font-size: 20px;
+        font-size: 22px; /* Era 20px, aumentado a 22px */
     }
     .situation-body {
         flex-direction: column; /* Apilar imagen y burbuja de chat */
@@ -226,47 +283,70 @@ body { background-color: #111; color: var(--text); line-height: 1.6; padding: 20
         width: 100%; /* Imagen ocupa todo el ancho disponible en la columna */
         max-width: 100%; /* Asegurar que no se desborde */
         height: auto;
-        order: 1; /* Opcional: si quieres la imagen primero */
+        order: 1;
+        border-width: 2px;
     }
     .situation-body .chat-bubble {
         width: 100%; /* Burbuja ocupa todo el ancho */
-        order: 2; /* Opcional: si quieres la burbuja después */
+        order: 2;
     }
     .chat-bubble {
-        font-size: 15px;
+        font-size: 17px; /* Era 15px, aumentado a 17px */
+        padding: 14px 16px; /* Era 12px 15px, aumentado para mejor toque */
+        line-height: 1.6; /* Mejor espaciado entre líneas */
+    }
+    .chat-name {
+        font-size: 15px; /* Aumentado para mejor legibilidad */
+        padding: 4px 8px; /* Aumentado padding */
     }
     .chat-ae:after, .chat-se:after {
-        display: none; /* Ocultar las colas de las burbujas que pueden verse mal */
+        display: none; /* Ocultar las colas de las burbujas */
     }
 
     /* --- Opciones --- */
     .option {
-        font-size: 15px;
-        padding: 10px 12px;
+        font-size: 17px; /* Era 15px, aumentado a 17px */
+        padding: 12px 14px; /* Era 10px 12px, aumentado */
+        margin-bottom: 10px; /* Era 8px, aumentado para mejor separación */
+        line-height: 1.5; /* Mejor espaciado */
+        border-width: 2px;
     }
     .option-number {
-        width: 24px;
-        height: 24px;
-        line-height: 24px;
-        font-size: 14px;
+        width: 26px; /* Era 24px, aumentado */
+        height: 26px; /* Era 24px, aumentado */
+        line-height: 26px; /* Ajustado al nuevo tamaño */
+        font-size: 16px; /* Era 14px, aumentado */
     }
 
     /* --- Outcome --- */
+    .outcome {
+        border-width: 2px;
+    }
     .outcome-title {
-        font-size: 18px;
+        font-size: 20px; /* Era 18px, aumentado */
     }
     .impact-item {
         flex-basis: calc(50% - 8px); /* Dos impactos por fila */
-        font-size: 14px;
+        font-size: 16px; /* Era 14px, aumentado a 16px */
+        padding: 12px 14px; /* Aumentado padding */
+        line-height: 1.4; /* Mejor espaciado */
+        border-width: 1px;
+    }
+    .impact-icon {
+        font-size: 20px; /* Aumentado para mejor visibilidad */
     }
 
     /* --- Botones --- */
     .button {
-        font-size: 16px;
-        padding: 10px 15px;
+        font-size: 18px; /* Era 16px, aumentado a 18px */
+        padding: 12px 18px; /* Era 10px 15px, aumentado */
+        min-height: 48px; /* Asegurar tamaño mínimo para toques */
     }
 
     /* --- Pantalla Final (Game Over) --- */
+    .game-over {
+        padding: 20px 10px; /* Reducir padding en pantalla final */
+    }
     .game-over h2 {
         font-size: 28px;
     }
@@ -278,10 +358,12 @@ body { background-color: #111; color: var(--text); line-height: 1.6; padding: 20
     }
     .game-over p#game-over-reason {
         font-size: 16px;
+        max-width: 95%;
     }
     .final-stats {
         width: 100%;
         padding: 10px;
+        gap: 10px;
     }
     .final-stat {
         flex-basis: calc(50% - 10px); /* Dos stats finales por fila */
@@ -296,81 +378,142 @@ body { background-color: #111; color: var(--text); line-height: 1.6; padding: 20
 
 /* Para móviles más pequeños (hasta 480px) */
 @media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    .container {
+        margin: 5px auto;
+        border-width: 3px;
+    }
+    #intro {
+        padding: 20px 15px;
+    }
     .intro h1 {
-        font-size: 26px;
+        font-size: 28px; /* Era 24px, aumentado a 28px */
     }
     .intro p {
-        font-size: 15px;
+        font-size: 16px; /* Era 14px, aumentado a 16px */
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    .intro-image {
+        max-width: 280px;
     }
 
     .game-title {
-        font-size: 20px;
+        font-size: 22px; /* Era 18px, aumentado a 22px */
+    }
+    .header {
+        padding: 6px 10px;
     }
 
+    /* Dashboard para móviles muy pequeños */
     .dashboard {
-        padding: 8px;
-        gap: 8px;
+        padding: 8px 5px;
+        gap: 5px;
     }
-    .stat {
-        flex-basis: 100%; /* Un stat por fila */
-        text-align: center;
-    }
-    .stat-progress { /* Stamina y ACV */
+    /* Opcional: Si los 3 items de la primera línea no caben, apilarlos */
+    /*
+    .dashboard > .stat:nth-child(1),
+    .dashboard > .stat:nth-child(2),
+    .dashboard > .stat:nth-child(3) {
         flex-basis: 100%;
+        margin-bottom: 5px;
     }
-    .stat-ae {
-         text-align: center;
+    .dashboard > .stat-ae:nth-child(4) {
+        margin-top: 5px;
     }
-    .ae-group {
-        justify-content: center;
-    }
+    */
+   .dashboard > .stat:nth-child(1) .stat-label,
+   .dashboard > .stat:nth-child(2) .stat-label,
+   .dashboard > .stat:nth-child(3) .stat-label {
+       font-size: 12px; /* Era 10px, aumentado a 12px */
+   }
+   .dashboard > .stat:nth-child(1) .stat-value,
+   .dashboard > .stat:nth-child(2) .stat-value,
+   .dashboard > .stat:nth-child(3) .stat-value {
+       font-size: 15px; /* Era 13px, aumentado a 15px */
+   }
+   .dashboard > .stat-ae:nth-child(4) .ae-name {
+       font-size: 10px; /* Reducir para que quepa mejor en una línea */
+   }
+   .dashboard > .stat-ae:nth-child(4) .hearts-container .heart {
+       font-size: 12px; /* Reducir para que quepa mejor en una línea */
+       min-width: 12px; /* Ajustar al nuevo tamaño */
+   }
 
+    .content {
+        padding: 10px;
+    }
     .situation-title {
-        font-size: 18px;
+        font-size: 20px; /* Era 16px, aumentado significativamente */
     }
     .chat-bubble {
-        font-size: 14px;
-        padding: 12px 15px;
+        font-size: 16px; /* Era 13px, aumentado significativamente */
+        padding: 12px 14px; /* Era 10px 12px, aumentado */
+        line-height: 1.6;
     }
+    .chat-name {
+        font-size: 14px; /* Era 12px, aumentado */
+        padding: 3px 7px; /* Era 2px 6px, aumentado */
+    }
+
+    /* --- Opciones --- */
     .option {
-        font-size: 14px;
-        padding: 8px 10px;
+        font-size: 16px; /* Era 13px, aumentado significativamente */
+        padding: 12px 14px; /* Era 8px 10px, aumentado significativamente */
+        margin-bottom: 12px; /* Era 8px, aumentado */
+        line-height: 1.5;
+    }
+    .option-number {
+        width: 28px; /* Era 22px, aumentado */
+        height: 28px; /* Era 22px, aumentado */
+        line-height: 28px;
+        font-size: 16px; /* Era 12px, aumentado significativamente */
     }
 
     .impact-item {
         flex-basis: 100%; /* Un impacto por fila */
-        font-size: 13px;
+        font-size: 15px; /* Era 12px, aumentado significativamente */
+        padding: 12px 14px; /* Era 8px 10px, aumentado */
+        line-height: 1.4;
     }
     .impact-icon {
-        font-size: 16px;
+        font-size: 18px; /* Era 16px, aumentado */
     }
 
     .button {
-        font-size: 15px;
+        font-size: 17px; /* Era 14px, aumentado significativamente */
         width: 100%; /* Botones ocupan todo el ancho para facilitar el toque */
-        padding: 12px 15px;
+        padding: 14px 16px; /* Era 10px 12px, aumentado */
+        min-height: 50px; /* Asegurar buen tamaño para toques */
+        margin-top: 15px;
     }
-    #start-game, #restart-game { /* Si quieres que los botones de intro y game over también sean full width */
-        width: auto; /* O ajusta como prefieras, por defecto son inline-block */
-        padding: 10px 20px; /* Restaura si no los quieres full-width */
+    #start-game, #restart-game {
+         width: auto; /* Devolver a auto si no se quiere full-width */
+         padding: 10px 20px;
     }
 
     .game-over h2 {
-        font-size: 24px;
+        font-size: 26px; /* Era 22px, aumentado */
     }
     .final-score-display {
-        font-size: 22px;
+        font-size: 24px; /* Era 20px, aumentado */
     }
     #final-score-value {
-        font-size: 50px;
+        font-size: 54px; /* Era 44px, aumentado */
     }
     .game-over p#game-over-reason {
-        font-size: 14px;
+        font-size: 16px; /* Era 13px, aumentado significativamente */
+        line-height: 1.6;
     }
     .final-stat {
         flex-basis: 100%; /* Un stat final por fila */
     }
     .final-value {
-        font-size: 18px;
+        font-size: 20px; /* Era 18px, aumentado */
+    }
+    .final-stat .stat-label {
+        font-size: 14px; /* Era 12px, aumentado */
     }
 }
